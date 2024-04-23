@@ -11,6 +11,9 @@ var { ruruHTML } = require("ruru/server")
 const schema = require('./schema/schema')
 const connectDB  = require('./config/db')
 
+// connect to database
+connectDB()
+
 const app = express();
 
 app.all(
