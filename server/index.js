@@ -1,5 +1,6 @@
 const express = require("express");
 const colors = require('colors')
+const cors = require('cors')
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 
@@ -11,10 +12,13 @@ var { ruruHTML } = require("ruru/server")
 const schema = require('./schema/schema')
 const connectDB  = require('./config/db')
 
+const app = express();
+
 // connect to database
 connectDB()
 
-const app = express();
+app.use(cors())
+
 
 app.all(
   "/graphql",
