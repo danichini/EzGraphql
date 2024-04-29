@@ -1,3 +1,3 @@
 # EzGRaphql
-simple client and server uising graphql to fetch and send data
+simple client and server utilising graphql to fetch and send data
 
