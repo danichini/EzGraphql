@@ -1,15 +1,31 @@
 const { gql } = require("@apollo/client");
 
 const ADD_PROJECT = gql`
-  mutation AddProject($name: String!, $description: String!, $status: String!) {
-    addProject(name: $name, description: $description, status: $status) {
+  mutation AddProject(
+    $name: String!
+    $description: String!
+    $status: ProjectStatus!
+    $clientId: ID!
+  ) {
+    addProject(
+      name: $name
+      description: $description
+      status: $status
+      clientId: $clientId
+    ) {
       id
       name
       description
       status
+      client {
+        id
+        name
+        email
+        phone
+      }
     }
   }
-`
+`;
 
 const DELETE_PROJECT = gql`
   mutation deleteProject($id: ID!) {
@@ -20,6 +36,6 @@ const DELETE_PROJECT = gql`
       status
     }
   }
-`
+`;
 
-export { ADD_PROJECT, DELETE_PROJECT }
+export { ADD_PROJECT, DELETE_PROJECT };
