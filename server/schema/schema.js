@@ -98,6 +98,15 @@ const mutation = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, { id }) {
+        Project.deleteMany({ clientId: id })
+          .then((result) => {
+            console.log(`${result.deletedCount} projects deleted`);
+          })
+          .catch((error) => {
+            console.error("Error deleting projects:", error);
+            const error = new Error('Invalid query')
+            throw error
+          });
         return Client.findByIdAndDelete(id);
       },
     },
@@ -134,7 +143,7 @@ const mutation = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLID) },
         name: { type: new GraphQLNonNull(GraphQLString) },
-        description: { type:  GraphQLString },
+        description: { type: GraphQLString },
         status: {
           type: new GraphQLEnumType({
             name: "ProjectStatusUpdate",
