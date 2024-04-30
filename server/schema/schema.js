@@ -104,8 +104,7 @@ const mutation = new GraphQLObjectType({
           })
           .catch((error) => {
             console.error("Error deleting projects:", error);
-            const error = new Error('Invalid query')
-            throw error
+            throw new Error('Invalid query')
           });
         return Client.findByIdAndDelete(id);
       },
