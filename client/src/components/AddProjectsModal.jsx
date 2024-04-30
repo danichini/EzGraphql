@@ -5,7 +5,7 @@ import { ADD_PROJECT } from "../mutations/projectMutations";
 import { GET_PROJECTS } from "../queries/projectQueries";
 import { GET_CLIENTS } from "../queries/clientQueries";
 
-export default function AddProjectModal() {
+export default function AddProjectsModal() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("new");
@@ -51,7 +51,7 @@ export default function AddProjectModal() {
             type="button"
             className="btn btn-primary"
             data-bs-toggle="modal"
-            data-bs-target="#addProjectModal"
+            data-bs-target="#addProjectsModal"
           >
             <div className="d-flex align-items-center">
               <FaList className="icon" />
@@ -61,14 +61,14 @@ export default function AddProjectModal() {
 
           <div
             className="modal fade"
-            id="addProjectModal"
-            aria-labelledby="addProjectModalLabel"
+            id="addProjectsModal"
+            aria-labelledby="addProjectsModalLabel"
             aria-hidden="true"
           >
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="addProjectModalLabel">
+                  <h1 className="modal-title fs-5" id="addProjectsModalLabel">
                     Add Client
                   </h1>
                   <button
@@ -122,7 +122,7 @@ export default function AddProjectModal() {
                       >
                         <option value="">Select Client</option>
                         {data.clients.map((client) => (
-                          <option value={client.id}>{client.name}</option>
+                          <option key={client.id} value={client.id}>{client.name}</option>
                         ))}
                       </select>
                     </div>
