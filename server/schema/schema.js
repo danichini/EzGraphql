@@ -9,6 +9,8 @@ const {
   GraphQLList,
   GraphQLNonNull,
   GraphQLEnumType,
+  GraphQLInt,
+  GraphQLBoolean,
 } = require("graphql");
 
 const ProjectType = new GraphQLObjectType({
@@ -27,6 +29,14 @@ const ProjectType = new GraphQLObjectType({
   }),
 });
 
+const PageInfoType = new GraphQLObjectType({
+  name: 'PageInfo',
+  fields: () => ({
+    hasNextPage: { type: GraphQLBoolean },
+    endCursor: { type: GraphQLString }
+  })
+});
+
 const ClientType = new GraphQLObjectType({
   name: "Client",
   fields: () => ({
@@ -41,10 +51,38 @@ const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
     projects: {
-      type: new GraphQLList(ProjectType),
-      resolve(parent, args) {
-        return Project.find();
+      type: new GraphQLObjectType({
+        name: "ProjectConnection",
+        fields: () => ({
+          totalCount: { type: GraphQLInt },
+          projectsList: { type: new GraphQLList(ProjectType) },
+          pageInfo: { type: PageInfoType }
+        })
+      }),
+      args: {
+        page: { type: GraphQLInt },
+        perPage: { type: GraphQLInt }
       },
+      async resolve(parent, { page = 1, perPage = 4 }) {
+        const skip = (page - 1) * perPage;
+        const limit = perPage;
+
+        // Get the total count of projects
+        const totalCountPromise = Project.countDocuments();
+
+        // Get paginated projects
+        const projectsPromise = Project.find().skip(skip).limit(limit);
+
+        const [totalCount, projects] = await Promise.all([totalCountPromise, projectsPromise]);
+        return ({
+          totalCount,
+          projectsList: projects,
+          pageInfo: {
+            hasNextPage: totalCount > skip + limit,
+            endCursor: (skip + limit).toString()
+          }
+        });
+      }
     },
     project: {
       type: ProjectType,
@@ -104,7 +142,7 @@ const mutation = new GraphQLObjectType({
           })
           .catch((error) => {
             console.error("Error deleting projects:", error);
-            throw new Error('Invalid query')
+            throw new Error("Invalid query");
           });
         return Client.findByIdAndDelete(id);
       },
